@@ -445,23 +445,47 @@
     /* ═══ FORM ═══ */
     .form-sec{padding:8rem 3rem;background:var(--bg2);transition:background .5s;position:relative;overflow:hidden}
     .form-sec::before{content:'';position:absolute;top:-200px;right:-200px;width:500px;height:500px;background:radial-gradient(circle,var(--glow-gold) 0%,transparent 70%);pointer-events:none}
-    .form-in{max-width:700px;margin:0 auto;position:relative}
-    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:3rem}
+    .form-in{max-width:600px;margin:0 auto;position:relative}
+    /* Steps indicator */
+    .form-steps{display:flex;align-items:center;justify-content:center;gap:0;margin:2.5rem auto 2rem;max-width:280px}
+    .form-step-dot{width:36px;height:36px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--fg4);transition:all .5s cubic-bezier(.16,1,.3,1);position:relative;z-index:1;background:var(--bg2)}
+    .form-step-dot.active{border-color:var(--red);color:var(--red);box-shadow:0 0 20px rgba(200,16,46,.15)}
+    .form-step-dot.done{border-color:var(--gold);color:#fff;background:var(--gold)}
+    .form-step-dot.done::after{content:'✓';font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700}
+    .form-step-dot.done span{display:none}
+    .form-step-line{flex:1;height:2px;background:var(--border);position:relative;transition:background .5s}
+    .form-step-line.done{background:linear-gradient(90deg,var(--gold),var(--red))}
+    .form-step-label{font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--fg4);text-align:center;margin-top:.4rem;transition:color .4s}
+    .form-step-dot.active+.form-step-label,.form-step-dot.active~.form-step-label{color:var(--fg3)}
+    .form-step-wrap{display:flex;flex-direction:column;align-items:center}
+    /* Step panels */
+    .form-panel{display:none;animation:formSlideIn .5s cubic-bezier(.16,1,.3,1)}
+    .form-panel.active{display:block}
+    @keyframes formSlideIn{0%{opacity:0;transform:translateX(30px)}100%{opacity:1;transform:translateX(0)}}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
     .form-group{display:flex;flex-direction:column;gap:.4rem}
     .form-group.full{grid-column:span 2}
     .form-label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--fg3);font-weight:500}
     .form-input,.form-select,.form-textarea{
-      background:var(--bg3);border:1px solid var(--border);padding:.9rem 1rem;
-      font-size:.85rem;color:var(--fg);font-family:inherit;border-radius:8px;
+      background:var(--bg3);border:1px solid var(--border);padding:1rem 1.1rem;
+      font-size:.85rem;color:var(--fg);font-family:inherit;border-radius:10px;
       transition:all .4s cubic-bezier(.16,1,.3,1);outline:none;
     }
     .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--red);box-shadow:0 0 0 4px rgba(200,16,46,.06);transform:translateY(-2px)}
-    .form-textarea{resize:vertical;min-height:100px}
+    .form-textarea{resize:vertical;min-height:90px}
     .form-select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center}
-    .form-submit{margin-top:1rem;grid-column:span 2}
+    .form-btns{display:flex;gap:.8rem;margin-top:1.5rem}
+    .form-btns .btn-p,.form-btns .btn-o{flex:1;justify-content:center;padding:1rem}
     .form-note{font-size:.7rem;color:var(--fg4);margin-top:1.2rem;text-align:center;line-height:1.6}
     .form-trust{display:flex;justify-content:center;gap:2rem;margin-top:1.5rem;flex-wrap:wrap}
     .form-trust-item{display:flex;align-items:center;gap:.4rem;font-size:.6rem;color:var(--fg4);letter-spacing:.05em}
+    /* Success state */
+    .form-success{display:none;text-align:center;padding:3rem 1rem;animation:formSlideIn .6s cubic-bezier(.16,1,.3,1)}
+    .form-success.active{display:block}
+    .form-success-icon{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--red));display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:1.5rem;color:#fff;animation:successPop .6s cubic-bezier(.16,1,.3,1)}
+    @keyframes successPop{0%{transform:scale(0) rotate(-180deg)}100%{transform:scale(1) rotate(0)}}
+    .form-success h3{font-family:'Bebas Neue',sans-serif;font-size:2rem;margin-bottom:.5rem}
+    .form-success p{color:var(--fg3);font-size:.85rem;line-height:1.7;max-width:400px;margin:0 auto}
 
     /* ═══ FAQ ═══ */
     .faq-list{margin-top:3rem}
@@ -764,7 +788,7 @@
       .sched-day{grid-template-columns:1fr;gap:.3rem}
       .footer-top{flex-direction:column}
       .form-grid{grid-template-columns:1fr}
-      .form-group.full,.form-submit{grid-column:span 1}
+      .form-group.full{grid-column:span 1}
       .img-brk{height:40vh}
       .social-proof{gap:1.5rem}
       .video-orb-1{width:200px;height:200px;right:0}
@@ -1426,21 +1450,53 @@
     <h2 class="sec-title rv d1" style="text-align:center;font-size:clamp(1.8rem,4vw,3.2rem)" data-i18n-html="form.title">Lascia i tuoi dati.<br/>Ti ricontattiamo <span style="color:var(--red)">entro 24h</span>.</h2>
     <p class="rv d2" style="color:var(--fg3);text-align:center;max-width:480px;margin:0 auto;line-height:1.7;font-size:.88rem" data-i18n="form.desc">Compila il form e un membro del nostro team ti contatterà per finalizzare la prenotazione e rispondere a ogni domanda.</p>
     <div class="rv d3" style="text-align:center;margin-top:1rem"><div class="urgency" style="margin:0 auto"><span class="urg-dot"></span><span data-i18n="form.urgency">Ultimi posti — La disponibilità potrebbe terminare oggi</span></div></div>
-    <form class="form-grid" onsubmit="handleForm(event)">
-      <div class="form-group rv d1"><label class="form-label" data-i18n="form.name">Nome *</label><input class="form-input" type="text" data-i18n-ph="form.name.ph" placeholder="Il tuo nome" required/></div>
-      <div class="form-group rv d2"><label class="form-label" data-i18n="form.surname">Cognome *</label><input class="form-input" type="text" data-i18n-ph="form.surname.ph" placeholder="Il tuo cognome" required/></div>
-      <div class="form-group rv d3"><label class="form-label">Email *</label><input class="form-input" type="email" placeholder="nome@email.com" required/></div>
-      <div class="form-group rv d4"><label class="form-label" data-i18n="form.phone">Telefono *</label><input class="form-input" type="tel" placeholder="+39 333 1234567" required/></div>
-      <div class="form-group rv d5"><label class="form-label" data-i18n="form.package">Pacchetto di interesse</label><select class="form-select" id="formPkg"><option value="" data-i18n="form.pkg.0">Seleziona un pacchetto</option><option data-i18n="form.pkg.1">Giovedì — Prove Libere (€500)</option><option data-i18n="form.pkg.2">Sabato — Qualifiche (€1.500)</option><option data-i18n="form.pkg.3">Domenica — Giorno di Gara (€2.500)</option><option data-i18n="form.pkg.4">Weekend Completo (Tutti e 3 i giorni)</option></select></div>
-      <div class="form-group rv d6"><label class="form-label" data-i18n="form.people">Numero di persone</label><select class="form-select" id="formPpl"><option value="" data-i18n="form.ppl.0">Seleziona</option><option data-i18n="form.ppl.1">1 persona</option><option data-i18n="form.ppl.2">2 persone</option><option data-i18n="form.ppl.3">3-4 persone</option><option data-i18n="form.ppl.4">5+ persone</option></select></div>
-      <div class="form-group full rv"><label class="form-label" data-i18n="form.msg">Messaggio (opzionale)</label><textarea class="form-textarea" data-i18n-ph="form.msg.ph" placeholder="Hai domande o richieste particolari?"></textarea></div>
-      <div class="form-submit rv"><button type="submit" class="btn-p" style="width:100%;justify-content:center;padding:1.1rem"><span data-i18n="form.submit">Invia Richiesta</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button></div>
-    </form>
-    <div class="form-trust rv d7">
-      <span class="form-trust-item" data-i18n="form.trust1">🔒 Dati protetti</span>
-      <span class="form-trust-item" data-i18n="form.trust2">⚡ Risposta in 24h</span>
-      <span class="form-trust-item" data-i18n="form.trust3">🚫 Zero spam</span>
+    <!-- Step Indicator -->
+    <div class="form-steps rv">
+      <div class="form-step-wrap"><div class="form-step-dot active" id="dot1"><span>1</span></div><div class="form-step-label" data-i18n="form.step1.label">I tuoi dati</div></div>
+      <div class="form-step-line" id="stepLine"></div>
+      <div class="form-step-wrap"><div class="form-step-dot" id="dot2"><span>2</span></div><div class="form-step-label" data-i18n="form.step2.label">Il tuo evento</div></div>
     </div>
+
+    <form id="multiForm" onsubmit="handleForm(event)">
+      <!-- STEP 1: Personal Info -->
+      <div class="form-panel active" id="step1">
+        <div class="form-grid">
+          <div class="form-group"><label class="form-label" data-i18n="form.name">Nome *</label><input class="form-input" id="fName" type="text" data-i18n-ph="form.name.ph" placeholder="Il tuo nome" required/></div>
+          <div class="form-group"><label class="form-label" data-i18n="form.surname">Cognome *</label><input class="form-input" id="fSurname" type="text" data-i18n-ph="form.surname.ph" placeholder="Il tuo cognome" required/></div>
+          <div class="form-group full"><label class="form-label">Email *</label><input class="form-input" id="fEmail" type="email" placeholder="nome@email.com" required/></div>
+          <div class="form-group full"><label class="form-label" data-i18n="form.phone">Telefono *</label><input class="form-input" id="fPhone" type="tel" placeholder="+39 333 1234567" required/></div>
+        </div>
+        <div class="form-btns">
+          <button type="button" class="btn-p" onclick="goStep(2)" style="width:100%;justify-content:center"><span data-i18n="form.next">Continua</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+        <div class="form-trust" style="margin-top:1.2rem">
+          <span class="form-trust-item" data-i18n="form.trust1">🔒 Dati protetti</span>
+          <span class="form-trust-item" data-i18n="form.trust2">⚡ Risposta in 24h</span>
+          <span class="form-trust-item" data-i18n="form.trust3">🚫 Zero spam</span>
+        </div>
+      </div>
+
+      <!-- STEP 2: Event Details -->
+      <div class="form-panel" id="step2">
+        <div class="form-grid">
+          <div class="form-group full"><label class="form-label" data-i18n="form.package">Pacchetto di interesse</label><select class="form-select" id="formPkg"><option value="" data-i18n="form.pkg.0">Seleziona un pacchetto</option><option data-i18n="form.pkg.1">Giovedì — Prove Libere (€500)</option><option data-i18n="form.pkg.2">Sabato — Qualifiche (€1.500)</option><option data-i18n="form.pkg.3">Domenica — Giorno di Gara (€2.500)</option><option data-i18n="form.pkg.4">Weekend Completo (Tutti e 3 i giorni)</option></select></div>
+          <div class="form-group full"><label class="form-label" data-i18n="form.people">Numero di persone</label><select class="form-select" id="formPpl"><option value="" data-i18n="form.ppl.0">Seleziona</option><option data-i18n="form.ppl.1">1 persona</option><option data-i18n="form.ppl.2">2 persone</option><option data-i18n="form.ppl.3">3-4 persone</option><option data-i18n="form.ppl.4">5+ persone</option></select></div>
+          <div class="form-group full"><label class="form-label" data-i18n="form.msg">Messaggio (opzionale)</label><textarea class="form-textarea" data-i18n-ph="form.msg.ph" placeholder="Hai domande o richieste particolari?"></textarea></div>
+        </div>
+        <div class="form-btns">
+          <button type="button" class="btn-o" onclick="goStep(1)" style="flex:.4"><span data-i18n="form.back">Indietro</span></button>
+          <button type="submit" class="btn-p" style="flex:.6;justify-content:center"><span data-i18n="form.submit">Invia Richiesta</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Success State -->
+    <div class="form-success" id="formSuccess">
+      <div class="form-success-icon">✓</div>
+      <h3 data-i18n="form.success.title">Richiesta Inviata!</h3>
+      <p data-i18n="form.success.msg">Il nostro team ti contatterà entro 24 ore per finalizzare la tua prenotazione. Controlla la tua email.</p>
+    </div>
+
     <div class="form-note rv d8" data-i18n="form.note">I tuoi dati sono al sicuro. Non condividiamo le tue informazioni con terzi.</div>
   </div>
 </section>
@@ -2284,15 +2340,38 @@
 
   // Parallax handled in master scroll handler above
 
-  // ═══ FORM ═══
+  // ═══ MULTI-STEP FORM ═══
+  let currentStep = 1;
+
+  function goStep(step) {
+    // Validate step 1 before proceeding
+    if (step === 2) {
+      const name = document.getElementById('fName');
+      const surname = document.getElementById('fSurname');
+      const email = document.getElementById('fEmail');
+      const phone = document.getElementById('fPhone');
+      if (!name.value || !surname.value || !email.value || !phone.value) {
+        [name, surname, email, phone].forEach(f => {
+          if (!f.value) { f.style.borderColor = '#c8102e'; f.style.boxShadow = '0 0 0 3px rgba(200,16,46,.1)'; setTimeout(() => { f.style.borderColor = ''; f.style.boxShadow = ''; }, 2000); }
+        });
+        return;
+      }
+      if (!email.checkValidity()) { email.style.borderColor = '#c8102e'; return; }
+    }
+
+    currentStep = step;
+    document.getElementById('step1').classList.toggle('active', step === 1);
+    document.getElementById('step2').classList.toggle('active', step === 2);
+    document.getElementById('dot1').className = step === 1 ? 'form-step-dot active' : 'form-step-dot done';
+    document.getElementById('dot2').className = step === 2 ? 'form-step-dot active' : 'form-step-dot';
+    document.getElementById('stepLine').className = step === 2 ? 'form-step-line done' : 'form-step-line';
+  }
+
   function handleForm(e) {
     e.preventDefault();
-    const btn = e.target.querySelector('button[type="submit"]');
-    const curLang = localStorage.getItem('lang') || 'it';
-    btn.innerHTML = T[curLang]['form.submitted'] || '✓ Richiesta Inviata!';
-    btn.style.background = '#2e7d32';
-    btn.disabled = true;
-    setTimeout(() => { const l = localStorage.getItem('lang') || 'it'; btn.innerHTML = '<span data-i18n="form.submit">' + (T[l]['form.submit'] || 'Invia Richiesta') + '</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>'; btn.style.background = ''; btn.disabled = false; }, 4000);
+    document.getElementById('multiForm').style.display = 'none';
+    document.querySelector('.form-steps').style.display = 'none';
+    document.getElementById('formSuccess').classList.add('active');
   }
 
   // ═══ TILT EFFECT ON CARDS ═══
