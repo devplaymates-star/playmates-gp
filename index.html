@@ -800,6 +800,8 @@
       .social-proof{flex-direction:column;gap:1rem;align-items:center}
       .cta-glow,.cta-glow2{display:none}
     }
+    .mid-cta{text-align:center;padding:3rem 2rem}
+    .mid-cta .btn-p{font-size:.7rem;padding:1.1rem 3rem}
   </style>
 </head>
 <body>
@@ -1002,6 +1004,25 @@
   <div class="mq-i">ACCESSO ESCLUSIVO <span class="m-d"></span> ATTICO SUL CIRCUITO <span class="m-d"></span> DJ INTERNAZIONALI <span class="m-d"></span> 500M² DI LUSSO <span class="m-d"></span> SOLO SU INVITO <span class="m-d"></span> OPEN BAR PREMIUM <span class="m-d"></span></div>
 </div></div>
 
+<!-- Video -->
+<section class="video-sec" id="video">
+  <div class="video-in">
+    <div class="video-fx">
+      <div class="video-orb video-orb-1"></div>
+      <div class="video-orb video-orb-2"></div>
+      <div class="video-orb video-orb-3"></div>
+      <div class="video-grid-bg"></div>
+      <div class="video-lines"><span></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="video-badge rv"><div class="video-badge-dot"></div><div class="video-badge-text" data-i18n="video.badge">Guarda cosa ti aspetta</div></div>
+    <div class="sec-title rv d1" style="margin-bottom:1.5rem;font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,4vw,3.5rem);line-height:.94;position:relative;z-index:2" data-i18n-html="video.title">Il tipo di weekend che<br/><span style="color:var(--red)">non dimenticherai</span> mai</div>
+    <div class="video-wrap rv-s d2">
+      <iframe src="https://www.youtube.com/embed/iOXZxujHZvg?rel=0&modestbranding=1&color=red&playsinline=1" title="Playmates GP" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen></iframe>
+    </div>
+    <div class="video-caption rv d3" data-i18n-html="video.caption">"Ogni dettaglio è studiato per farti sentire come se Monaco fosse stata costruita intorno a te." — <strong>Playmates GP</strong></div>
+  </div>
+</section>
+
 <!-- Intro -->
 <section class="intro" style="position:relative;overflow:hidden">
   <!-- Monaco Hairpin Corner -->
@@ -1025,25 +1046,6 @@
   </div>
   <div class="intro-inner">
     <p class="intro-text" id="introText" data-i18n-html="intro.text">Chi ha partecipato l'anno scorso lo definisce <em>"il weekend più incredibile della mia vita"</em>. Non è un'esagerazione. È un attico privato da 500 metri quadri con vista diretta sulla pista, DJ che suonano nei migliori club di Ibiza, champagne che non finisce mai, e un gruppo selezionato di persone che, come te, non si accontentano del normale.</p>
-  </div>
-</section>
-
-<!-- Video -->
-<section class="video-sec" id="video">
-  <div class="video-in">
-    <div class="video-fx">
-      <div class="video-orb video-orb-1"></div>
-      <div class="video-orb video-orb-2"></div>
-      <div class="video-orb video-orb-3"></div>
-      <div class="video-grid-bg"></div>
-      <div class="video-lines"><span></span><span></span><span></span><span></span></div>
-    </div>
-    <div class="video-badge rv"><div class="video-badge-dot"></div><div class="video-badge-text" data-i18n="video.badge">Guarda cosa ti aspetta</div></div>
-    <div class="sec-title rv d1" style="margin-bottom:1.5rem;font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,4vw,3.5rem);line-height:.94;position:relative;z-index:2" data-i18n-html="video.title">Il tipo di weekend che<br/><span style="color:var(--red)">non dimenticherai</span> mai</div>
-    <div class="video-wrap rv-s d2">
-      <iframe src="https://www.youtube.com/embed/iOXZxujHZvg?rel=0&modestbranding=1&color=red&playsinline=1" title="Playmates GP" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen></iframe>
-    </div>
-    <div class="video-caption rv d3" data-i18n-html="video.caption">"Ogni dettaglio è studiato per farti sentire come se Monaco fosse stata costruita intorno a te." — <strong>Playmates GP</strong></div>
   </div>
 </section>
 
@@ -1081,6 +1083,8 @@
   </div>
 </section>
 
+<div class="mid-cta rv"><a href="#pricing" class="btn-p"><span data-i18n="mid.cta1">Vedi i Pacchetti e Prenota</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
+
 <div class="glow-sep"></div>
 
 <!-- Image Break -->
@@ -1111,6 +1115,59 @@
   <div class="vs-item"><span class="vs-val red">1°</span><span class="vs-lbl" data-i18n="vs.front">Fila sul Circuito</span></div>
   <div class="vs-item"><span class="vs-val gold">5★</span><span class="vs-lbl" data-i18n="vs.chef">Chef Privato</span></div>
 </div>
+
+<!-- Testimonials -->
+<section class="testimonial-sec">
+  <!-- Speedometer SVG -->
+  <div class="speedo-svg rv-s" id="speedoSvg">
+    <svg viewBox="0 0 200 130" fill="none">
+      <path d="M20,110 A80,80 0 0,1 180,110" stroke="#c9a227" stroke-width="1.5" stroke-dasharray="3 4" opacity=".3"/>
+      <path d="M20,110 A80,80 0 0,1 180,110" stroke="url(#speedoG)" stroke-width="10" opacity=".1"/>
+      <path d="M20,110 A80,80 0 0,1 180,110" stroke="url(#speedoG)" stroke-width="4" stroke-dasharray="200" stroke-dashoffset="200">
+        <animate attributeName="stroke-dashoffset" values="200;30" dur="2.5s" fill="freeze"/>
+      </path>
+      <line x1="28" y1="92" x2="38" y2="100" stroke="#c8102e" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="48" y1="52" x2="57" y2="62" stroke="#c9a227" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="100" y1="28" x2="100" y2="40" stroke="#c8102e" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="152" y1="52" x2="143" y2="62" stroke="#c9a227" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="172" y1="92" x2="162" y2="100" stroke="#c8102e" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="100" y1="108" x2="158" y2="58" stroke="#c8102e" stroke-width="2.5" stroke-linecap="round">
+        <animateTransform attributeName="transform" type="rotate" values="-60 100 108;42 100 108;35 100 108" dur="2.5s" fill="freeze"/>
+      </line>
+      <circle cx="100" cy="108" r="6" fill="#c8102e"/>
+      <circle cx="100" cy="108" r="12" fill="none" stroke="#c8102e" stroke-width="1.5" opacity=".3">
+        <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".3;.6;.3" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <text x="100" y="98" text-anchor="middle" font-family="Bebas Neue" font-size="22" fill="#c8102e" opacity=".6">320</text>
+      <text x="100" y="123" text-anchor="middle" font-family="Bebas Neue" font-size="7" fill="#c9a227" letter-spacing=".3em" opacity=".5">KM/H</text>
+      <defs><linearGradient id="speedoG" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#c9a227"/><stop offset="50%" stop-color="#c8102e"/><stop offset="100%" stop-color="#c8102e"/></linearGradient></defs>
+    </svg>
+  </div>
+  <div class="sec-tag rv" style="justify-content:center" data-i18n="test.tag">Cosa Dicono i Nostri Ospiti</div>
+  <h2 class="sec-title rv d1" style="text-align:center;font-size:clamp(1.6rem,3.5vw,3rem);margin-bottom:3rem" data-i18n-html="test.title">Le parole di chi <span style="color:var(--gold)">c'era</span></h2>
+  <div class="testimonial-track" id="testimonialTrack">
+    <div class="testimonial-slide active">
+      <p class="testimonial-quote" data-i18n="test.q1">"Ho viaggiato in tutto il mondo, ma nulla si avvicina a quello che ho vissuto in quell'attico. Monaco sotto i tuoi piedi, champagne senza fine, e la sensazione di essere nel posto giusto."</p>
+      <span class="testimonial-author" data-i18n="test.a1">Marco R. — Imprenditore, Milano</span>
+    </div>
+    <div class="testimonial-slide">
+      <p class="testimonial-quote" data-i18n="test.q2">"Pensavo fosse solo un evento con vista gara. Mi sbagliavo. È un'esperienza che ti cambia il modo di vedere il lusso. Prenoto ogni anno."</p>
+      <span class="testimonial-author" data-i18n="test.a2">Sofia L. — Creative Director, Londra</span>
+    </div>
+    <div class="testimonial-slide">
+      <p class="testimonial-quote" data-i18n="test.q3">"L'attenzione ai dettagli è surreale. Dalla qualità del cibo ai DJ, alla guest list — ogni elemento è stato curato alla perfezione. Non tornerò mai a guardare il GP in nessun altro modo."</p>
+      <span class="testimonial-author" data-i18n="test.a3">Alessandro V. — CEO, Dubai</span>
+    </div>
+  </div>
+  <div class="testimonial-dots" id="testimonialDots">
+    <span class="active" onclick="goTestimonial(0)"></span>
+    <span onclick="goTestimonial(1)"></span>
+    <span onclick="goTestimonial(2)"></span>
+  </div>
+</section>
+
+<div class="mid-cta rv"><a href="#pricing" class="btn-p"><span data-i18n="mid.cta2">Prenota Prima Che Finiscano</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
 
 <div class="glow-sep"></div>
 
@@ -1239,59 +1296,6 @@
   </div>
 </div>
 
-<!-- Testimonials -->
-<section class="testimonial-sec">
-  <!-- Speedometer SVG -->
-  <div class="speedo-svg rv-s" id="speedoSvg">
-    <svg viewBox="0 0 200 130" fill="none">
-      <path d="M20,110 A80,80 0 0,1 180,110" stroke="#c9a227" stroke-width="1.5" stroke-dasharray="3 4" opacity=".3"/>
-      <path d="M20,110 A80,80 0 0,1 180,110" stroke="url(#speedoG)" stroke-width="10" opacity=".1"/>
-      <path d="M20,110 A80,80 0 0,1 180,110" stroke="url(#speedoG)" stroke-width="4" stroke-dasharray="200" stroke-dashoffset="200">
-        <animate attributeName="stroke-dashoffset" values="200;30" dur="2.5s" fill="freeze"/>
-      </path>
-      <line x1="28" y1="92" x2="38" y2="100" stroke="#c8102e" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="48" y1="52" x2="57" y2="62" stroke="#c9a227" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="100" y1="28" x2="100" y2="40" stroke="#c8102e" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="152" y1="52" x2="143" y2="62" stroke="#c9a227" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="172" y1="92" x2="162" y2="100" stroke="#c8102e" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="100" y1="108" x2="158" y2="58" stroke="#c8102e" stroke-width="2.5" stroke-linecap="round">
-        <animateTransform attributeName="transform" type="rotate" values="-60 100 108;42 100 108;35 100 108" dur="2.5s" fill="freeze"/>
-      </line>
-      <circle cx="100" cy="108" r="6" fill="#c8102e"/>
-      <circle cx="100" cy="108" r="12" fill="none" stroke="#c8102e" stroke-width="1.5" opacity=".3">
-        <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values=".3;.6;.3" dur="2s" repeatCount="indefinite"/>
-      </circle>
-      <text x="100" y="98" text-anchor="middle" font-family="Bebas Neue" font-size="22" fill="#c8102e" opacity=".6">320</text>
-      <text x="100" y="123" text-anchor="middle" font-family="Bebas Neue" font-size="7" fill="#c9a227" letter-spacing=".3em" opacity=".5">KM/H</text>
-      <defs><linearGradient id="speedoG" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#c9a227"/><stop offset="50%" stop-color="#c8102e"/><stop offset="100%" stop-color="#c8102e"/></linearGradient></defs>
-    </svg>
-  </div>
-  <div class="sec-tag rv" style="justify-content:center" data-i18n="test.tag">Cosa Dicono i Nostri Ospiti</div>
-  <h2 class="sec-title rv d1" style="text-align:center;font-size:clamp(1.6rem,3.5vw,3rem);margin-bottom:3rem" data-i18n-html="test.title">Le parole di chi <span style="color:var(--gold)">c'era</span></h2>
-  <div class="testimonial-track" id="testimonialTrack">
-    <div class="testimonial-slide active">
-      <p class="testimonial-quote" data-i18n="test.q1">"Ho viaggiato in tutto il mondo, ma nulla si avvicina a quello che ho vissuto in quell'attico. Monaco sotto i tuoi piedi, champagne senza fine, e la sensazione di essere nel posto giusto."</p>
-      <span class="testimonial-author" data-i18n="test.a1">Marco R. — Imprenditore, Milano</span>
-    </div>
-    <div class="testimonial-slide">
-      <p class="testimonial-quote" data-i18n="test.q2">"Pensavo fosse solo un evento con vista gara. Mi sbagliavo. È un'esperienza che ti cambia il modo di vedere il lusso. Prenoto ogni anno."</p>
-      <span class="testimonial-author" data-i18n="test.a2">Sofia L. — Creative Director, Londra</span>
-    </div>
-    <div class="testimonial-slide">
-      <p class="testimonial-quote" data-i18n="test.q3">"L'attenzione ai dettagli è surreale. Dalla qualità del cibo ai DJ, alla guest list — ogni elemento è stato curato alla perfezione. Non tornerò mai a guardare il GP in nessun altro modo."</p>
-      <span class="testimonial-author" data-i18n="test.a3">Alessandro V. — CEO, Dubai</span>
-    </div>
-  </div>
-  <div class="testimonial-dots" id="testimonialDots">
-    <span class="active" onclick="goTestimonial(0)"></span>
-    <span onclick="goTestimonial(1)"></span>
-    <span onclick="goTestimonial(2)"></span>
-  </div>
-</section>
-
-<div class="checkered"></div>
-
 <!-- Schedule -->
 <section class="sec" id="schedule">
   <!-- Steering Wheel SVG -->
@@ -1326,6 +1330,8 @@
     </div>
   </div>
 </section>
+
+<div class="mid-cta rv"><a href="#pricing" class="btn-p"><span data-i18n="mid.cta3">Scegli il Tuo Giorno</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
 
 <!-- Urgency Ticker -->
 <div class="urgency-ticker">
@@ -1370,6 +1376,9 @@
     <div style="text-align:center;margin-bottom:1.5rem"><div class="urgency rv" style="margin:0 auto"><span class="urg-dot"></span><span data-i18n="price.urgency">Solo 8 posti rimasti — Si esauriscono velocemente</span></div></div>
     <div class="sec-tag rv d1" style="justify-content:center" data-i18n="price.tag">Investi Nel Tuo Weekend Perfetto</div>
     <h2 class="sec-title rv d2" style="text-align:center" data-i18n-html="price.title">Scegli il giorno.<br/>Noi pensiamo a <span style="color:var(--red)">tutto il resto</span>.</h2>
+    <div class="rv d3" style="text-align:center;margin-bottom:3rem">
+      <p style="color:var(--fg3);font-size:.75rem;line-height:1.8;max-width:600px;margin:0 auto" data-i18n-html="pricing.value">Un biglietto VIP tribunale a Monaco costa <strong style="color:var(--fg)">€2.000+</strong>. Una notte in hotel 4 stelle <strong style="color:var(--fg)">€800+</strong>. Cena in un ristorante stellato <strong style="color:var(--fg)">€300+</strong>.<br/>Con noi hai <strong style="color:var(--gold)">tutto incluso</strong> — e molto di più — a partire da soli <strong style="color:var(--red)">€500</strong>.</p>
+    </div>
     <div class="pricing-grid">
       <div class="p-card rv d1"><div class="p-eye" data-i18n="price.c1.eye">Giovedì</div><div class="p-nm" data-i18n="price.c1.name">Prove Libere</div><div class="p-amt"><span class="c">€</span>500</div><div class="p-per" data-i18n="price.per">a persona</div><ul class="p-feats"><li data-i18n="price.c1.f1">Accesso all'attico tutto il giorno</li><li data-i18n="price.c1.f2">Prove dal balcone privato</li><li data-i18n="price.c1.f3">Cocktail di benvenuto</li><li data-i18n="price.c1.f4">Pranzo dello chef privato</li><li data-i18n="price.c1.f5">Open bar premium + champagne</li><li data-i18n="price.c1.f6">DJ set al tramonto</li></ul><button class="p-btn out" onclick="location.href='#contact'" data-i18n="price.btn">Prenota Questo Giorno</button></div>
       <div class="p-card feat rv d2"><div class="p-badge" data-i18n="price.popular">Più Richiesto</div><div class="p-eye" data-i18n="price.c2.eye">Sabato</div><div class="p-nm" data-i18n="price.c2.name">Qualifiche</div><div class="p-amt"><span class="c">€</span>1.500</div><div class="p-per" data-i18n="price.per">a persona</div><ul class="p-feats"><li data-i18n="price.c2.f1">Accesso all'attico tutto il giorno</li><li data-i18n="price.c2.f2">Qualifiche in diretta dal balcone</li><li data-i18n="price.c2.f3">Brunch premium + champagne</li><li data-i18n="price.c2.f4">Cena gourmet 3 portate</li><li data-i18n="price.c2.f5">Open bar ultra-premium</li><li data-i18n="price.c2.f6">DJ headliner internazionale</li><li data-i18n="price.c2.f7">Networking VIP + ospiti speciali</li></ul><button class="p-btn pri" onclick="location.href='#contact'" data-i18n="price.btn">Prenota Questo Giorno</button></div>
@@ -1416,6 +1425,7 @@
     <div class="sec-tag rv" style="justify-content:center" data-i18n="form.tag">Riserva Il Tuo Posto</div>
     <h2 class="sec-title rv d1" style="text-align:center;font-size:clamp(1.8rem,4vw,3.2rem)" data-i18n-html="form.title">Lascia i tuoi dati.<br/>Ti ricontattiamo <span style="color:var(--red)">entro 24h</span>.</h2>
     <p class="rv d2" style="color:var(--fg3);text-align:center;max-width:480px;margin:0 auto;line-height:1.7;font-size:.88rem" data-i18n="form.desc">Compila il form e un membro del nostro team ti contatterà per finalizzare la prenotazione e rispondere a ogni domanda.</p>
+    <div class="rv d3" style="text-align:center;margin-top:1rem"><div class="urgency" style="margin:0 auto"><span class="urg-dot"></span><span data-i18n="form.urgency">Ultimi posti — La disponibilità potrebbe terminare oggi</span></div></div>
     <form class="form-grid" onsubmit="handleForm(event)">
       <div class="form-group rv d1"><label class="form-label" data-i18n="form.name">Nome *</label><input class="form-input" type="text" data-i18n-ph="form.name.ph" placeholder="Il tuo nome" required/></div>
       <div class="form-group rv d2"><label class="form-label" data-i18n="form.surname">Cognome *</label><input class="form-input" type="text" data-i18n-ph="form.surname.ph" placeholder="Il tuo cognome" required/></div>
@@ -1449,6 +1459,7 @@
   <div class="sec-in" style="max-width:750px">
     <div class="sec-tag rv" style="justify-content:center" data-i18n="faq.tag">Hai Ancora Dubbi?</div>
     <h2 class="sec-title rv d1" style="text-align:center" data-i18n-html="faq.title">Le risposte che <span style="color:var(--red)">cercavi</span></h2>
+    <p class="sec-desc rv d2" style="text-align:center;margin:0 auto 1rem;max-width:500px" data-i18n="faq.intro">Sappiamo che un investimento così merita risposte chiare. Ecco tutto quello che devi sapere.</p>
     <div class="faq-list">
       <div class="faq-item rv d1"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-t" data-i18n="faq.q1">Cosa è incluso esattamente in ogni pacchetto?</span><span class="faq-q-i">+</span></div><div class="faq-a"><div class="faq-a-in" data-i18n="faq.a1">Accesso all'attico privato di 500m² per l'intera giornata, cibo e bevande ultra-premium, visione gara dal balcone privato, intrattenimento DJ, e accesso alla guest list curata. Le specifiche variano per giornata.</div></div></div>
       <div class="faq-item rv d2"><div class="faq-q" onclick="toggleFaq(this)"><span class="faq-q-t" data-i18n="faq.q2">Quante persone ci saranno?</span><span class="faq-q-i">+</span></div><div class="faq-a"><div class="faq-a-in" data-i18n="faq.a2">La guest list è volutamente limitata. L'attico è enorme (500m²), ma noi preferiamo la qualità alla quantità. Pensa a un evento intimo ed esclusivo, non a una festa affollata.</div></div></div>
@@ -1524,7 +1535,7 @@
   <div class="cta-con">
     <div class="urgency rv" style="margin:0 auto 2rem"><span class="urg-dot"></span><span data-i18n="cta.urgency">I posti si stanno esaurendo</span></div>
     <h2 class="cta-title rv d1" data-i18n-html="cta.title">I SEMAFORI<br/>SI <span class="grad-text">SPENGONO</span></h2>
-    <p class="cta-sub rv d2" data-i18n="cta.sub">Questo non è un evento a cui partecipi. È un'esperienza che ti meriti. Quando i cinque semafori si spengono, si spegne anche la tua occasione.</p>
+    <p class="cta-sub rv d2" data-i18n="cta.sub">Nel 2025 i posti si sono esauriti in 48 ore. Non commettere l'errore di aspettare. Ogni minuto che passa, un posto in meno è disponibile per te.</p>
     <div class="cta-btns rv d3">
       <a href="#contact" class="btn-p" style="padding:1.1rem 3rem"><span data-i18n="cta.btn1">Riserva il Tuo Posto</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       <a href="#pricing" class="btn-o" style="padding:1.1rem 3rem" data-i18n="cta.btn2">Vedi i Pacchetti</a>
