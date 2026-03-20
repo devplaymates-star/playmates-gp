@@ -256,16 +256,42 @@
     .sp-item-text{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fg3);font-weight:500}
     .sp-item-text strong{display:block;color:var(--fg);font-size:.8rem;letter-spacing:0;text-transform:none;font-weight:600}
 
-    /* Event atmosphere strip */
-    .event-strip{padding:0;overflow:hidden}
-    .event-strip-inner{display:flex;gap:0}
-    .event-img{flex:1;min-width:0;height:220px;overflow:hidden;position:relative}
-    .event-img img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(.16,1,.3,1),filter .8s;filter:brightness(.65) saturate(.9);transform:scale(1.05)}
-    .event-img:hover img,.event-img.mob-hover img{transform:scale(1.15);filter:brightness(1) saturate(1.1)}
-    .event-img::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.5));pointer-events:none;transition:opacity .6s}
-    .event-img:hover::after,.event-img.mob-hover::after{opacity:.2}
-    @media(max-width:767px){.event-img{height:140px}.event-strip-inner{flex-wrap:wrap}.event-img{flex:1 1 33.33%}}
-    @media(max-width:479px){.event-img{flex:1 1 50%;height:110px}}
+    /* Event atmosphere strip — 3D perspective */
+    .event-strip{padding:2rem 3rem;overflow:visible;perspective:1200px}
+    .event-strip-inner{display:flex;gap:12px;justify-content:center}
+    .event-img{flex:1;min-width:0;height:260px;overflow:hidden;position:relative;border-radius:12px;transform-style:preserve-3d;transition:all .8s cubic-bezier(.16,1,.3,1);box-shadow:0 15px 40px rgba(0,0,0,.3)}
+    .event-img:nth-child(1){transform:perspective(1000px) rotateY(4deg)}
+    .event-img:nth-child(2){transform:perspective(1000px) rotateY(2deg);z-index:1}
+    .event-img:nth-child(3){transform:perspective(1000px) rotateY(0deg);z-index:2}
+    .event-img:nth-child(4){transform:perspective(1000px) rotateY(-1deg);z-index:1}
+    .event-img:nth-child(5){transform:perspective(1000px) rotateY(-3deg)}
+    .event-img:nth-child(6){transform:perspective(1000px) rotateY(-5deg)}
+    .event-img:hover,.event-img.mob-hover{transform:perspective(1000px) rotateY(0deg) scale(1.08) translateZ(20px)!important;z-index:10;box-shadow:0 25px 60px rgba(0,0,0,.5),0 0 40px rgba(201,162,39,.08);border:1px solid rgba(201,162,39,.15)}
+    .event-img img{width:100%;height:100%;object-fit:cover;transition:transform 1s cubic-bezier(.16,1,.3,1),filter .6s;filter:brightness(.7) saturate(.9);transform:scale(1.08)}
+    .event-img:hover img,.event-img.mob-hover img{transform:scale(1.15);filter:brightness(1.05) saturate(1.15)}
+    .event-img::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.6));pointer-events:none;transition:opacity .6s;border-radius:12px}
+    .event-img:hover::after,.event-img.mob-hover::after{opacity:.15}
+    .event-img .ev-label{position:absolute;bottom:.8rem;left:.8rem;z-index:3;font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:#fff;opacity:0;transform:translateY(6px);transition:all .5s}
+    .event-img:hover .ev-label,.event-img.mob-hover .ev-label{opacity:.8;transform:translateY(0)}
+    @media(max-width:991px){.event-strip{padding:1.5rem;perspective:800px}.event-img{height:200px}.event-strip-inner{gap:8px}}
+    @media(max-width:767px){.event-img{height:160px}.event-strip-inner{flex-wrap:wrap;gap:6px}.event-img{flex:1 1 calc(33.33% - 4px)}.event-img:nth-child(n){transform:none}}
+    @media(max-width:479px){.event-img{flex:1 1 calc(50% - 3px);height:130px}}
+
+    /* Intro gallery — floating cards */
+    .intro-gallery{display:flex;gap:14px;margin-top:3rem;justify-content:center;perspective:1000px}
+    .intro-gal-item{flex:1;max-width:280px;height:220px;border-radius:14px;overflow:hidden;position:relative;transition:all .8s cubic-bezier(.16,1,.3,1);box-shadow:0 15px 40px rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.04)}
+    .intro-gal-item:nth-child(1){transform:perspective(800px) rotateY(5deg) translateY(10px)}
+    .intro-gal-item:nth-child(2){transform:perspective(800px) rotateY(0deg) translateY(-5px) scale(1.04);z-index:2;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+    .intro-gal-item:nth-child(3){transform:perspective(800px) rotateY(-5deg) translateY(10px)}
+    .intro-gal-item:hover,.intro-gal-item.mob-hover{transform:perspective(800px) rotateY(0deg) translateY(-10px) scale(1.06)!important;z-index:5;box-shadow:0 25px 60px rgba(0,0,0,.4),0 0 30px rgba(201,162,39,.08);border-color:rgba(201,162,39,.15)}
+    .intro-gal-item img{width:100%;height:100%;object-fit:cover;transition:transform 1s cubic-bezier(.16,1,.3,1),filter .5s;filter:brightness(.75);transform:scale(1.05)}
+    .intro-gal-item:hover img,.intro-gal-item.mob-hover img{transform:scale(1.12);filter:brightness(1.05)}
+    .intro-gal-item::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.5));pointer-events:none;transition:opacity .5s;border-radius:14px}
+    .intro-gal-item:hover::after,.intro-gal-item.mob-hover::after{opacity:.15}
+    .intro-gal-item .ig-label{position:absolute;bottom:.7rem;left:.7rem;z-index:3;font-size:.45rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);opacity:0;transform:translateY(5px);transition:all .5s}
+    .intro-gal-item:hover .ig-label,.intro-gal-item.mob-hover .ig-label{opacity:1;transform:translateY(0)}
+    @media(max-width:767px){.intro-gallery{gap:8px;flex-wrap:wrap}.intro-gal-item{max-width:none;flex:1 1 calc(50% - 4px);height:160px}.intro-gal-item:nth-child(3){flex:1 1 100%}.intro-gal-item:nth-child(n){transform:none}}
+    @media(max-width:479px){.intro-gal-item{height:140px}}
 
     /* ═══ MARQUEE ═══ */
     .marquee{padding:2rem 0;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative}
@@ -1040,12 +1066,12 @@
 <!-- Event Atmosphere Strip -->
 <div class="event-strip rv">
   <div class="event-strip-inner">
-    <div class="event-img"><img src="https://images.unsplash.com/photo-1613066697157-e8345495b665?w=800&q=85&fm=jpg" alt="Rooftop party" loading="lazy"/></div>
-    <div class="event-img"><img src="https://images.unsplash.com/photo-1664917303642-53aee32d3573?w=800&q=85&fm=jpg" alt="People toasting" loading="lazy"/></div>
-    <div class="event-img"><img src="https://images.unsplash.com/photo-1566572532173-8cbba6039d07?w=800&q=85&fm=jpg" alt="DJ party" loading="lazy"/></div>
-    <div class="event-img"><img src="https://images.unsplash.com/photo-1462525801781-b621ba1d6fab?w=800&q=85&fm=jpg" alt="Champagne" loading="lazy"/></div>
-    <div class="event-img"><img src="images/8f9787eb-dad0-4885-b655-083dbd2d9af8.JPG" alt="Luxury living" loading="lazy"/></div>
-    <div class="event-img"><img src="https://images.unsplash.com/photo-1695128881846-7b5de5d5f32d?w=800&q=85&fm=jpg" alt="Evening celebration" loading="lazy"/></div>
+    <div class="event-img"><img src="https://images.unsplash.com/photo-1613066697157-e8345495b665?w=800&q=85&fm=jpg" alt="Rooftop party" loading="lazy"/><span class="ev-label">Rooftop Party</span></div>
+    <div class="event-img"><img src="https://images.unsplash.com/photo-1664917303642-53aee32d3573?w=800&q=85&fm=jpg" alt="People toasting" loading="lazy"/><span class="ev-label">VIP Guests</span></div>
+    <div class="event-img"><img src="https://images.unsplash.com/photo-1566572532173-8cbba6039d07?w=800&q=85&fm=jpg" alt="DJ party" loading="lazy"/><span class="ev-label">DJ Set</span></div>
+    <div class="event-img"><img src="https://images.unsplash.com/photo-1462525801781-b621ba1d6fab?w=800&q=85&fm=jpg" alt="Champagne" loading="lazy"/><span class="ev-label">Champagne</span></div>
+    <div class="event-img"><img src="images/8f9787eb-dad0-4885-b655-083dbd2d9af8.JPG" alt="Luxury living" loading="lazy"/><span class="ev-label">L'Attico</span></div>
+    <div class="event-img"><img src="https://images.unsplash.com/photo-1695128881846-7b5de5d5f32d?w=800&q=85&fm=jpg" alt="Evening celebration" loading="lazy"/><span class="ev-label">Sunset Party</span></div>
   </div>
 </div>
 
@@ -1097,10 +1123,10 @@
   </div>
   <div class="intro-inner">
     <p class="intro-text" id="introText" data-i18n-html="intro.text">Chi ha partecipato l'anno scorso lo definisce <em>"il weekend più incredibile della mia vita"</em>. Non è un'esagerazione. È un attico privato da 500 metri quadri con vista diretta sulla pista, DJ che suonano nei migliori club di Ibiza, champagne che non finisce mai, e un gruppo selezionato di persone che, come te, non si accontentano del normale.</p>
-    <div style="display:flex;gap:6px;margin-top:3rem;border-radius:12px;overflow:hidden">
-      <div style="flex:1;height:200px;overflow:hidden"><img src="https://images.unsplash.com/photo-1695128881846-7b5de5d5f32d?w=600&q=80&fm=jpg" alt="Party" style="width:100%;height:100%;object-fit:cover" loading="lazy"/></div>
-      <div style="flex:1;height:200px;overflow:hidden"><img src="images/34bfebd8-9181-4444-8b2b-52b462a9bd0a.JPG" alt="Terrace view" style="width:100%;height:100%;object-fit:cover" loading="lazy"/></div>
-      <div style="flex:1;height:200px;overflow:hidden"><img src="https://images.unsplash.com/photo-1613066697157-e8345495b665?w=600&q=80&fm=jpg" alt="Rooftop" style="width:100%;height:100%;object-fit:cover" loading="lazy"/></div>
+    <div class="intro-gallery">
+      <div class="intro-gal-item"><img src="https://images.unsplash.com/photo-1695128881846-7b5de5d5f32d?w=600&q=85&fm=jpg" alt="Evening celebration" loading="lazy"/><span class="ig-label">The Party</span></div>
+      <div class="intro-gal-item"><img src="images/34bfebd8-9181-4444-8b2b-52b462a9bd0a.JPG" alt="Terrace view Monaco" loading="lazy"/><span class="ig-label">Your View</span></div>
+      <div class="intro-gal-item"><img src="https://images.unsplash.com/photo-1613066697157-e8345495b665?w=600&q=85&fm=jpg" alt="Rooftop evening" loading="lazy"/><span class="ig-label">The Vibe</span></div>
     </div>
   </div>
 </section>
@@ -2436,7 +2462,7 @@
         }
       });
     }, { threshold: [0, 0.3, 0.6, 1] });
-    document.querySelectorAll('.event-img, .exp-card, .hscroll-item, .p-card, .loc-img, .loc-feat, .stat, .vs-item, .faq-item').forEach(el => mobHoverObs.observe(el));
+    document.querySelectorAll('.event-img, .exp-card, .hscroll-item, .p-card, .loc-img, .loc-feat, .stat, .vs-item, .faq-item, .intro-gal-item').forEach(el => mobHoverObs.observe(el));
   }
 
   // ═══ TILT EFFECT ON CARDS ═══
