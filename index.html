@@ -249,21 +249,18 @@
     .sec-desc{color:var(--fg3);max-width:500px;line-height:1.8;font-size:.88rem}
 
     /* ═══ SOCIAL PROOF BAR ═══ */
-    .social-proof{padding:3.5rem 3rem;display:flex;justify-content:center;align-items:stretch;gap:0;flex-wrap:wrap;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
-    .social-proof::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(200,16,46,.03) 0%,transparent 40%,rgba(201,162,39,.03) 70%,transparent 100%);pointer-events:none}
-    .sp-item{display:flex;flex-direction:column;align-items:center;gap:.6rem;flex:1;padding:1.5rem 1rem;position:relative;transition:all .6s cubic-bezier(.16,1,.3,1);text-align:center;min-width:140px}
-    .sp-item+.sp-item::before{content:'';position:absolute;left:0;top:20%;height:60%;width:1px;background:linear-gradient(180deg,transparent,var(--border2),transparent)}
-    .sp-item:hover,.sp-item.mob-hover{transform:translateY(-5px)}
-    .sp-item-icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(200,16,46,.08),rgba(201,162,39,.06));border:1px solid rgba(201,162,39,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;transition:all .5s cubic-bezier(.16,1,.3,1);position:relative}
-    .sp-item:hover .sp-item-icon,.sp-item.mob-hover .sp-item-icon{transform:scale(1.1) rotate(-3deg);border-color:rgba(201,162,39,.3);box-shadow:0 8px 25px rgba(201,162,39,.1)}
-    .sp-item-icon::after{content:'';position:absolute;inset:-3px;border-radius:16px;border:1px solid rgba(201,162,39,.06);transition:all .5s;opacity:0}
-    .sp-item:hover .sp-item-icon::after,.sp-item.mob-hover .sp-item-icon::after{opacity:1;inset:-6px;border-radius:18px}
-    .sp-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:1;background:linear-gradient(135deg,var(--fg),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;transition:all .5s}
-    .sp-item:hover .sp-val,.sp-item.mob-hover .sp-val{background:linear-gradient(135deg,var(--red),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;transform:scale(1.08)}
-    .sp-label{font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;color:var(--fg4);line-height:1.5;transition:color .4s}
-    .sp-item:hover .sp-label,.sp-item.mob-hover .sp-label{color:var(--fg3)}
-    @media(max-width:767px){.social-proof{gap:0;padding:2rem 1rem}.sp-item{min-width:0;flex:1 1 50%;padding:1rem .5rem}.sp-item:nth-child(3)::before{display:none}.sp-item-icon{width:44px;height:44px;font-size:1rem}.sp-val{font-size:1.6rem}}
-    @media(max-width:479px){.sp-item{flex:1 1 50%}.sp-item:nth-child(odd)+.sp-item::before{display:none}}
+    .social-proof{padding:1.8rem 3rem;border-bottom:1px solid var(--border);position:relative}
+    .sp-row{display:flex;justify-content:center;align-items:center;gap:2rem;flex-wrap:wrap;max-width:900px;margin:0 auto}
+    .sp-chip{display:inline-flex;align-items:center;gap:.5rem;padding:.45rem 1rem;border:1px solid var(--border);border-radius:99px;font-size:.6rem;letter-spacing:.06em;color:var(--fg3);transition:all .5s cubic-bezier(.16,1,.3,1);background:var(--bg3);opacity:0;transform:translateY(10px)}
+    .sp-chip.vis{opacity:1;transform:translateY(0)}
+    .sp-chip:hover,.sp-chip.mob-hover{border-color:rgba(201,162,39,.25);color:var(--fg);transform:translateY(-2px);box-shadow:0 6px 20px var(--card-shadow)}
+    .sp-chip strong{font-family:'Bebas Neue',sans-serif;font-size:.85rem;color:var(--gold);letter-spacing:.02em}
+    .sp-chip .sp-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+    .sp-chip .sp-dot.red{background:var(--red)}
+    .sp-chip .sp-dot.gold{background:var(--gold)}
+    .sp-tagline{text-align:center;margin-top:1rem;font-size:.5rem;letter-spacing:.4em;text-transform:uppercase;color:var(--fg4);opacity:0;transform:translateY(8px);transition:all .8s .5s}
+    .sp-tagline.vis{opacity:1;transform:translateY(0)}
+    @media(max-width:767px){.social-proof{padding:1.4rem 1.5rem}.sp-row{gap:.6rem}.sp-chip{font-size:.52rem;padding:.35rem .7rem}.sp-chip strong{font-size:.75rem}.sp-tagline{font-size:.42rem;letter-spacing:.3em;margin-top:.7rem}}
 
     /* Event atmosphere strip — 3D perspective */
     .event-strip{padding:2rem 3rem;overflow:visible;perspective:1200px}
@@ -1059,27 +1056,14 @@
 </section>
 
 <!-- Social Proof Bar -->
-<div class="social-proof rv">
-  <div class="sp-item">
-    <div class="sp-item-icon">🏆</div>
-    <div class="sp-val">100%</div>
-    <div class="sp-label" data-i18n="sp.soldout">Sold Out 2025</div>
+<div class="social-proof">
+  <div class="sp-row">
+    <div class="sp-chip rv" style="transition-delay:.1s"><span class="sp-dot red"></span><strong>100%</strong> <span data-i18n="sp.soldout">Sold Out 2025</span></div>
+    <div class="sp-chip rv" style="transition-delay:.2s"><span class="sp-dot gold"></span><strong>5/5</strong> <span data-i18n="sp.rating">Valutazione Ospiti</span></div>
+    <div class="sp-chip rv" style="transition-delay:.3s"><span class="sp-dot red"></span><strong data-i18n="sp.invite">Solo Invito</strong> <span data-i18n="sp.guestlist">Guest List Curata</span></div>
+    <div class="sp-chip rv" style="transition-delay:.4s"><span class="sp-dot gold"></span><strong data-i18n="sp.spots">8 Posti</strong> <span data-i18n="sp.remaining">Rimasti 2026</span></div>
   </div>
-  <div class="sp-item">
-    <div class="sp-item-icon">⭐</div>
-    <div class="sp-val">5/5</div>
-    <div class="sp-label" data-i18n="sp.rating">Valutazione Ospiti</div>
-  </div>
-  <div class="sp-item">
-    <div class="sp-item-icon">🔒</div>
-    <div class="sp-val" data-i18n="sp.invite">Solo Invito</div>
-    <div class="sp-label" data-i18n="sp.guestlist">Guest List Esclusiva</div>
-  </div>
-  <div class="sp-item">
-    <div class="sp-item-icon">🎯</div>
-    <div class="sp-val" data-i18n="sp.spots">8 Posti</div>
-    <div class="sp-label" data-i18n="sp.remaining">Rimasti per il 2026</div>
-  </div>
+  <div class="sp-tagline rv" data-i18n="sp.tagline">L'evento più esclusivo del Gran Premio di Monaco — dal 2023</div>
 </div>
 
 <!-- Event Atmosphere Strip -->
@@ -2509,7 +2493,7 @@
         }
       });
     }, { threshold: [0, 0.3, 0.6, 1] });
-    document.querySelectorAll('.event-img, .exp-card, .hscroll-item, .p-card, .loc-img, .loc-feat, .stat, .vs-item, .faq-item, .intro-gal-item, .sp-item').forEach(el => mobHoverObs.observe(el));
+    document.querySelectorAll('.event-img, .exp-card, .hscroll-item, .p-card, .loc-img, .loc-feat, .stat, .vs-item, .faq-item, .intro-gal-item, .sp-chip').forEach(el => mobHoverObs.observe(el));
   }
 
   // ═══ TILT EFFECT ON CARDS ═══
