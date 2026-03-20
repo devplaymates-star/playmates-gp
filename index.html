@@ -2116,6 +2116,10 @@
     // Save
     localStorage.setItem('lang', code);
     document.documentElement.lang = code;
+    // Update URL param without reload
+    const url = new URL(window.location);
+    url.searchParams.set('lang', code);
+    history.replaceState(null, '', url);
     // Title
     if (dict['title']) document.title = dict['title'];
     // Desktop picker
@@ -2155,14 +2159,19 @@
     }
   });
 
-  // Auto-detect language
+  // Auto-detect language: URL param > localStorage > browser
   (function() {
-    let lang = localStorage.getItem('lang');
-    if (!lang) {
+    const urlLang = new URLSearchParams(window.location.search).get('lang');
+    let lang;
+    if (urlLang && T[urlLang]) {
+      lang = urlLang;
+    } else if (localStorage.getItem('lang') && T[localStorage.getItem('lang')]) {
+      lang = localStorage.getItem('lang');
+    } else {
       const nav = (navigator.language || '').slice(0,2).toLowerCase();
       lang = ({it:'it',fr:'fr',es:'es'})[nav] || 'en';
     }
-    if (T[lang]) setLang(lang);
+    setLang(lang);
   })();
 
   // ═══ THEME TOGGLE ═══
