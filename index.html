@@ -2529,28 +2529,29 @@
       utm_content: urlParams.get('utm_content') || ''
     };
 
-    fetch('WEBHOOK_URL_FORM', {
+    // Telegram notification
+    const tgMsg = `🏎️ NUOVO LEAD PLAYMATES GP\n\n👤 ${payload.name} ${payload.surname}\n📧 ${payload.email}\n📱 ${payload.phone}\n🎫 ${payload.package || 'Non selezionato'}\n👥 ${payload.people || 'Non specificato'}\n🌐 Lingua: ${payload.language}\n📝 ${payload.message || '-'}\n\n📊 Source: ${payload.utm_source || 'direct'} / ${payload.utm_campaign || '-'}`;
+    fetch('https://api.telegram.org/bot8499503859:AAGvx7SVuCRyiPdgLW5U73b3FBhCMWuJrDU/sendMessage', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(payload)
-    })
-    .then(r => {
-      if (typeof fbq !== 'undefined') fbq('track', 'Lead');
-      if (typeof ttq !== 'undefined') ttq.track('SubmitForm');
-      document.getElementById('multiForm').style.display = 'none';
-      document.querySelector('.form-steps').style.display = 'none';
-      document.getElementById('formSuccess').classList.add('active');
-    })
-    .catch(err => {
-      const errorMsg = {it:'Errore di invio. Scrivici su WhatsApp.',en:'Sending error. Message us on WhatsApp.',fr:'Erreur d\'envoi. Écrivez-nous sur WhatsApp.',es:'Error de envío. Escríbenos por WhatsApp.'}[lang];
-      btn.innerHTML = errorMsg;
-      btn.style.background = '#c8102e';
-      setTimeout(() => {
-        btn.innerHTML = '<span data-i18n="form.submit">' + (T[lang]?.['form.submit'] || 'Invia Richiesta') + '</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
-        btn.style.background = '';
-        btn.disabled = false;
-      }, 4000);
-    });
+      body: JSON.stringify({chat_id: 7803603653, text: tgMsg})
+    }).catch(() => {});
+
+    // Webhook n8n (when configured)
+    if ('WEBHOOK_URL_FORM' !== 'WEBHOOK_URL_FORM') {
+      fetch('WEBHOOK_URL_FORM', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      }).catch(() => {});
+    }
+
+    // Success
+    if (typeof fbq !== 'undefined') fbq('track', 'Lead');
+    if (typeof ttq !== 'undefined') ttq.track('SubmitForm');
+    document.getElementById('multiForm').style.display = 'none';
+    document.querySelector('.form-steps').style.display = 'none';
+    document.getElementById('formSuccess').classList.add('active');
   }
 
   // ═══ MOBILE SCROLL = HOVER EFFECT ═══
