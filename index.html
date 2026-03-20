@@ -867,6 +867,31 @@
     }
     .mid-cta{text-align:center;padding:3rem 2rem}
     .mid-cta .btn-p{font-size:.7rem;padding:1.1rem 3rem}
+
+/* ═══ WHATSAPP FLOATING ═══ */
+.wa-float{position:fixed;bottom:5.5rem;right:2rem;z-index:9997;display:flex;align-items:center;gap:.5rem;padding:.55rem 1.2rem;background:var(--glass);backdrop-filter:blur(15px);border:1px solid rgba(37,211,102,.15);border-radius:99px;color:#fff;font-size:.6rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;box-shadow:0 8px 25px var(--card-shadow);opacity:0;transform:translateY(15px);animation:fUp 1s ease 6s forwards;transition:all .4s cubic-bezier(.16,1,.3,1)}
+.wa-float:hover{border-color:rgba(37,211,102,.4);box-shadow:0 12px 35px var(--card-shadow),0 0 20px rgba(37,211,102,.1);transform:translateY(-2px)}
+.wa-float svg{flex-shrink:0;fill:#25D366}
+.wa-text{color:var(--fg)}
+@media(max-width:767px){.wa-float{bottom:4.5rem;left:1.2rem;right:auto;padding:.5rem}.wa-text{display:none}}
+
+/* ═══ EXIT POPUP ═══ */
+.exit-overlay{position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);display:flex;justify-content:center;align-items:center;opacity:0;visibility:hidden;transition:all .4s cubic-bezier(.16,1,.3,1);padding:1.5rem}
+.exit-overlay.show{opacity:1;visibility:visible}
+.exit-popup{background:var(--bg2);border:1px solid rgba(201,162,39,.15);border-radius:16px;padding:2.5rem;max-width:420px;width:100%;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.4);transform:scale(.9) translateY(20px);transition:all .5s cubic-bezier(.16,1,.3,1)}
+.exit-overlay.show .exit-popup{transform:scale(1) translateY(0)}
+.exit-close{position:absolute;top:1rem;right:1rem;width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--fg);font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s}
+.exit-close:hover{border-color:var(--red);color:var(--red);transform:rotate(90deg)}
+.exit-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(200,16,46,.08);border:1px solid rgba(200,16,46,.2);padding:.3rem .8rem;border-radius:99px;font-size:.55rem;font-weight:700;color:var(--red);letter-spacing:.12em;margin-bottom:1rem}
+.exit-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.4rem,4vw,2rem);line-height:1;margin-bottom:.8rem;color:var(--fg)}
+.exit-desc{font-size:.8rem;color:var(--fg3);line-height:1.7;margin-bottom:1.5rem}
+.exit-form{display:flex;gap:.5rem}
+.exit-input{flex:1;background:var(--bg3);border:1px solid var(--border);padding:.8rem 1rem;font-size:.8rem;color:var(--fg);font-family:inherit;border-radius:8px;outline:none;transition:border-color .3s}
+.exit-input:focus{border-color:var(--red)}
+.exit-btn{background:var(--red);color:#fff;padding:.8rem 1.5rem;font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border:none;border-radius:8px;cursor:pointer;transition:all .4s;white-space:nowrap}
+.exit-btn:hover{box-shadow:0 8px 25px rgba(200,16,46,.3);transform:translateY(-2px)}
+.exit-note{font-size:.6rem;color:var(--fg4);margin-top:.8rem;text-align:center}
+@media(max-width:479px){.exit-form{flex-direction:column}.exit-popup{padding:2rem 1.5rem}}
   </style>
 </head>
 <body>
@@ -2477,9 +2502,55 @@
 
   function handleForm(e) {
     e.preventDefault();
-    document.getElementById('multiForm').style.display = 'none';
-    document.querySelector('.form-steps').style.display = 'none';
-    document.getElementById('formSuccess').classList.add('active');
+    const lang = new URLSearchParams(window.location.search).get('lang') || 'it';
+    const btn = e.target.querySelector('button[type="submit"]');
+    const sendingText = {it:'Invio in corso...',en:'Sending...',fr:'Envoi en cours...',es:'Enviando...'}[lang];
+    btn.innerHTML = sendingText;
+    btn.disabled = true;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const payload = {
+      name: document.getElementById('fName')?.value || '',
+      surname: document.getElementById('fSurname')?.value || '',
+      email: document.getElementById('fEmail')?.value || '',
+      phone: document.getElementById('fPhone')?.value || '',
+      package: document.getElementById('formPkg')?.value || '',
+      people: document.getElementById('formPpl')?.value || '',
+      message: e.target.querySelector('textarea')?.value || '',
+      language: lang,
+      source: 'website_form',
+      timestamp: new Date().toISOString(),
+      page_url: window.location.href,
+      user_agent: navigator.userAgent,
+      referrer: document.referrer,
+      utm_source: urlParams.get('utm_source') || '',
+      utm_medium: urlParams.get('utm_medium') || '',
+      utm_campaign: urlParams.get('utm_campaign') || '',
+      utm_content: urlParams.get('utm_content') || ''
+    };
+
+    fetch('WEBHOOK_URL_FORM', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    })
+    .then(r => {
+      if (typeof fbq !== 'undefined') fbq('track', 'Lead');
+      if (typeof ttq !== 'undefined') ttq.track('SubmitForm');
+      document.getElementById('multiForm').style.display = 'none';
+      document.querySelector('.form-steps').style.display = 'none';
+      document.getElementById('formSuccess').classList.add('active');
+    })
+    .catch(err => {
+      const errorMsg = {it:'Errore di invio. Scrivici su WhatsApp.',en:'Sending error. Message us on WhatsApp.',fr:'Erreur d\'envoi. Écrivez-nous sur WhatsApp.',es:'Error de envío. Escríbenos por WhatsApp.'}[lang];
+      btn.innerHTML = errorMsg;
+      btn.style.background = '#c8102e';
+      setTimeout(() => {
+        btn.innerHTML = '<span data-i18n="form.submit">' + (T[lang]?.['form.submit'] || 'Invia Richiesta') + '</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 4000);
+    });
   }
 
   // ═══ MOBILE SCROLL = HOVER EFFECT ═══
@@ -2704,7 +2775,127 @@
     });
   }, { threshold: .5 });
   document.querySelectorAll('.exp-name, .sched-nm, .p-nm').forEach(el => scrambleObs.observe(el));
+
+  // ═══ WHATSAPP BUTTON ═══
+  function waClick(e) {
+    e.preventDefault();
+    const lang = new URLSearchParams(window.location.search).get('lang') || 'it';
+    const msgs = {
+      it: 'Ciao, sono interessato al Playmates Grand Prix Monaco 2026. Vorrei maggiori informazioni.',
+      en: "Hi, I'm interested in the Playmates Grand Prix Monaco 2026. I'd like more information.",
+      fr: 'Bonjour, je suis intéressé par le Playmates Grand Prix Monaco 2026. Je souhaiterais plus d\'informations.',
+      es: 'Hola, estoy interesado en el Playmates Grand Prix Monaco 2026. Me gustaría más información.'
+    };
+    if (typeof fbq !== 'undefined') fbq('trackCustom', 'WhatsAppClick');
+    if (typeof ttq !== 'undefined') ttq.track('Contact');
+    const urlP = new URLSearchParams(window.location.search);
+    fetch('WEBHOOK_URL_WA_CLICK', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({event:'whatsapp_click',timestamp:new Date().toISOString(),page_url:window.location.href,referrer:document.referrer,language:lang,utm_source:urlP.get('utm_source')||'',utm_medium:urlP.get('utm_medium')||'',utm_campaign:urlP.get('utm_campaign')||''})
+    }).catch(()=>{});
+    window.open('https://wa.me/WHATSAPP_NUMBER?text=' + encodeURIComponent(msgs[lang] || msgs.it), '_blank');
+  }
+  // Update WA text on lang change
+  function updateWaText() {
+    const lang = new URLSearchParams(window.location.search).get('lang') || 'it';
+    const texts = {it:'Scrivici',en:'Chat with us',fr:'Écrivez-nous',es:'Escríbenos'};
+    const el = document.getElementById('waText');
+    if (el) el.textContent = texts[lang] || texts.it;
+  }
+  updateWaText();
+  // Hook into setLang if it exists
+  const origSetLang = window.setLang;
+  if (typeof origSetLang === 'function') {
+    window.setLang = function(code) {
+      origSetLang(code);
+      updateWaText();
+      updateExitLang();
+    };
+  }
+
+  // ═══ EXIT INTENT POPUP ═══
+  const exitTexts = {
+    it: {badge:'ASPETTA',title:'Stai per perdere il tuo posto',desc:'I posti si esauriscono velocemente. Lascia la tua email e ti invieremo il dossier esclusivo con le foto dell\'edizione 2025 — gratis, senza impegno.',ph:'La tua email migliore',btn:'Invia il Dossier',note2:'solo contenuti esclusivi'},
+    en: {badge:'WAIT',title:"You're about to lose your spot",desc:'Spots are selling out fast. Leave your email and we\'ll send you the exclusive dossier with photos from the 2025 edition — free, no commitment.',ph:'Your best email',btn:'Send the Dossier',note2:'exclusive content only'},
+    fr: {badge:'ATTENDEZ',title:'Vous êtes sur le point de perdre votre place',desc:'Les places s\'épuisent rapidement. Laissez votre email et nous vous enverrons le dossier exclusif avec les photos de l\'édition 2025 — gratuit, sans engagement.',ph:'Votre meilleur email',btn:'Envoyer le Dossier',note2:'contenu exclusif uniquement'},
+    es: {badge:'ESPERA',title:'Estás a punto de perder tu lugar',desc:'Los lugares se agotan rápidamente. Deja tu email y te enviaremos el dossier exclusivo con las fotos de la edición 2025 — gratis, sin compromiso.',ph:'Tu mejor email',btn:'Enviar el Dossier',note2:'solo contenido exclusivo'}
+  };
+
+  function updateExitLang() {
+    const lang = new URLSearchParams(window.location.search).get('lang') || 'it';
+    const t = exitTexts[lang] || exitTexts.it;
+    const badge = document.getElementById('exitBadge'); if(badge) badge.textContent = t.badge;
+    const title = document.getElementById('exitTitle'); if(title) title.textContent = t.title;
+    const desc = document.getElementById('exitDesc'); if(desc) desc.textContent = t.desc;
+    const input = document.getElementById('exitEmail'); if(input) input.placeholder = t.ph;
+    const btn = document.getElementById('exitBtn'); if(btn) btn.textContent = t.btn;
+    const note = document.getElementById('exitNote2'); if(note) note.textContent = t.note2;
+  }
+  updateExitLang();
+
+  let exitShown = false;
+  function showExit() {
+    if (exitShown || sessionStorage.getItem('exitShown')) return;
+    exitShown = true;
+    sessionStorage.setItem('exitShown', '1');
+    document.getElementById('exitOverlay').classList.add('show');
+  }
+  // Desktop: mouseout
+  document.addEventListener('mouseout', e => { if (e.clientY <= 0) showExit(); });
+  // Mobile: 45s timer
+  if ('ontouchstart' in window) setTimeout(showExit, 45000);
+
+  // Close popup
+  document.getElementById('exitClose').addEventListener('click', () => document.getElementById('exitOverlay').classList.remove('show'));
+  document.getElementById('exitOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.classList.remove('show'); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('exitOverlay')?.classList.remove('show'); });
+
+  function exitSubmit(e) {
+    e.preventDefault();
+    const lang = new URLSearchParams(window.location.search).get('lang') || 'it';
+    const email = document.getElementById('exitEmail').value;
+    const btn = document.getElementById('exitBtn');
+    btn.textContent = '...';
+    btn.disabled = true;
+    fetch('WEBHOOK_URL_EXIT', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email, source:'exit_intent_popup', language:lang, timestamp:new Date().toISOString(), page_url:window.location.href})
+    }).then(() => {
+      if (typeof fbq !== 'undefined') fbq('track', 'Lead');
+      const ok = {it:'✓ Dossier in arrivo!',en:'✓ Dossier on its way!',fr:'✓ Dossier en route!',es:'✓ Dossier en camino!'};
+      btn.textContent = ok[lang] || ok.it;
+      btn.style.background = '#2e7d32';
+      setTimeout(() => document.getElementById('exitOverlay').classList.remove('show'), 2500);
+    }).catch(() => {
+      btn.textContent = 'Error';
+      btn.style.background = '#c8102e';
+      setTimeout(() => { btn.textContent = exitTexts[lang]?.btn || 'Invia'; btn.style.background = ''; btn.disabled = false; }, 3000);
+    });
+  }
 </script>
+
+<!-- WhatsApp Button -->
+<a href="#" class="wa-float" id="waFloat" onclick="waClick(event)">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.612.638l4.704-1.347A11.934 11.934 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.323 0-4.47-.759-6.2-2.042l-.433-.326-2.836.812.862-2.705-.357-.462A9.935 9.935 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+  <span class="wa-text" id="waText">Scrivici</span>
+</a>
+
+<!-- Exit Intent Popup -->
+<div class="exit-overlay" id="exitOverlay">
+  <div class="exit-popup">
+    <button class="exit-close" id="exitClose">&times;</button>
+    <div class="exit-badge" id="exitBadge">ASPETTA</div>
+    <h3 class="exit-title" id="exitTitle">Stai per perdere il tuo posto</h3>
+    <p class="exit-desc" id="exitDesc">I posti si esauriscono velocemente. Lascia la tua email e ti invieremo il dossier esclusivo con le foto dell'edizione 2025 — gratis, senza impegno.</p>
+    <form class="exit-form" onsubmit="exitSubmit(event)">
+      <input type="email" class="exit-input" id="exitEmail" required/>
+      <button type="submit" class="exit-btn" id="exitBtn">Invia il Dossier</button>
+    </form>
+    <div class="exit-note">Zero spam — <span id="exitNote2">solo contenuti esclusivi</span></div>
+  </div>
+</div>
 
 </body>
 </html>

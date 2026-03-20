@@ -1,0 +1,971 @@
+{
+  "name": "Playmates GP Lead Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "playmates-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-lead",
+      "name": "Webhook Lead",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "webhookId": "playmates-lead"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: \"ok\" }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-lead",
+      "name": "Respond Lead",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "TUO_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "Nome": "={{ $json.body.name }}",
+            "Cognome": "={{ $json.body.surname }}",
+            "Email": "={{ $json.body.email }}",
+            "Telefono": "={{ $json.body.phone }}",
+            "Pacchetto": "={{ $json.body.package }}",
+            "Persone": "={{ $json.body.people }}",
+            "Messaggio": "={{ $json.body.message }}",
+            "Lingua": "={{ $json.body.language }}",
+            "Source": "={{ $json.body.source }}",
+            "UTM_Source": "={{ $json.body.utm_source }}",
+            "UTM_Medium": "={{ $json.body.utm_medium }}",
+            "UTM_Campaign": "={{ $json.body.utm_campaign }}",
+            "Page_URL": "={{ $json.body.page_url }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "gsheets-lead",
+      "name": "Google Sheets Lead",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [640, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TUO_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.callmebot.com/whatsapp.php",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "phone", "value": "CALLMEBOT_PHONE" },
+            { "name": "text", "value": "={{ encodeURIComponent('\\ud83c\\udfc8 NUOVO LEAD PLAYMATES GP\\n\\ud83d\\udc64 ' + $json.body.name + ' ' + $json.body.surname + '\\n\\ud83d\\udce7 ' + $json.body.email + '\\n\\ud83d\\udcf1 ' + $json.body.phone + '\\n\\ud83c\\udfab ' + $json.body.package + '\\n\\ud83d\\udc65 ' + $json.body.people + '\\n\\ud83c\\udf10 Lingua: ' + $json.body.language + '\\n\\ud83d\\udcdd ' + ($json.body.message || '')) }}" },
+            { "name": "apikey", "value": "CALLMEBOT_APIKEY" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "callmebot-new-lead",
+      "name": "CallMeBot New Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [860, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            { "value": "it", "output": 0 },
+            { "value": "en", "output": 1 },
+            { "value": "fr", "output": 2 },
+            { "value": "es", "output": 3 }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{ $json.body.language }}",
+        "fallbackOutput": 0
+      },
+      "id": "switch-lang-1",
+      "name": "Switch Language 1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 2,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\u2705 Richiesta ricevuta \\u2014 Playmates Grand Prix Monaco 2026",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">MONACO 2026</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#f0ece7;font-size:22px;\">Grazie, {{ $('Webhook Lead').item.json.body.name }}!</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Abbiamo ricevuto la tua richiesta per il pacchetto <strong style=\"color:#c9a227;\">{{ $('Webhook Lead').item.json.body.package }}</strong> per <strong>{{ $('Webhook Lead').item.json.body.people }}</strong> persone.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Il nostro team ti contatter\\u00e0 entro <strong style=\"color:#c8102e;\">24 ore</strong> per finalizzare la tua prenotazione.</p><div style=\"background-color:#1a1a1a;border-left:3px solid #c8102e;padding:15px 20px;margin:20px 0;border-radius:4px;\"><p style=\"color:#c9a227;font-size:14px;margin:0;\">\\u26a0\\ufe0f DISPONIBILIT\\u00c0 LIMITATA</p><p style=\"color:#f0ece7;font-size:15px;margin:8px 0 0;\">Rimangono solo <strong style=\"color:#c8102e;\">8 posti</strong> per l'esperienza esclusiva Monaco 2026.</p></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix \\u2014 L'esperienza F1 pi\\u00f9 esclusiva al mondo</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-confirm-it",
+      "name": "Email Conferma IT",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1320, 100],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\u2705 Request received \\u2014 Playmates Grand Prix Monaco 2026",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">MONACO 2026</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#f0ece7;font-size:22px;\">Thank you, {{ $('Webhook Lead').item.json.body.name }}!</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">We have received your request for the <strong style=\"color:#c9a227;\">{{ $('Webhook Lead').item.json.body.package }}</strong> package for <strong>{{ $('Webhook Lead').item.json.body.people }}</strong> guests.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Our team will contact you within <strong style=\"color:#c8102e;\">24 hours</strong> to finalize your booking.</p><div style=\"background-color:#1a1a1a;border-left:3px solid #c8102e;padding:15px 20px;margin:20px 0;border-radius:4px;\"><p style=\"color:#c9a227;font-size:14px;margin:0;\">\\u26a0\\ufe0f LIMITED AVAILABILITY</p><p style=\"color:#f0ece7;font-size:15px;margin:8px 0 0;\">Only <strong style=\"color:#c8102e;\">8 spots</strong> remain for the exclusive Monaco 2026 experience.</p></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix \\u2014 The world's most exclusive F1 experience</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-confirm-en",
+      "name": "Email Confirm EN",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1320, 300],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\u2705 Demande re\\u00e7ue \\u2014 Playmates Grand Prix Monaco 2026",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">MONACO 2026</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#f0ece7;font-size:22px;\">Merci, {{ $('Webhook Lead').item.json.body.name }}!</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Nous avons re\\u00e7u votre demande pour le forfait <strong style=\"color:#c9a227;\">{{ $('Webhook Lead').item.json.body.package }}</strong> pour <strong>{{ $('Webhook Lead').item.json.body.people }}</strong> personnes.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Notre \\u00e9quipe vous contactera dans les <strong style=\"color:#c8102e;\">24 heures</strong> pour finaliser votre r\\u00e9servation.</p><div style=\"background-color:#1a1a1a;border-left:3px solid #c8102e;padding:15px 20px;margin:20px 0;border-radius:4px;\"><p style=\"color:#c9a227;font-size:14px;margin:0;\">\\u26a0\\ufe0f DISPONIBILIT\\u00c9 LIMIT\\u00c9E</p><p style=\"color:#f0ece7;font-size:15px;margin:8px 0 0;\">Seulement <strong style=\"color:#c8102e;\">8 places</strong> restantes pour l'exp\\u00e9rience exclusive Monaco 2026.</p></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix \\u2014 L'exp\\u00e9rience F1 la plus exclusive au monde</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-confirm-fr",
+      "name": "Email Confirm FR",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1320, 500],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\u2705 Solicitud recibida \\u2014 Playmates Grand Prix Monaco 2026",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">MONACO 2026</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#f0ece7;font-size:22px;\">Gracias, {{ $('Webhook Lead').item.json.body.name }}!</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Hemos recibido tu solicitud para el paquete <strong style=\"color:#c9a227;\">{{ $('Webhook Lead').item.json.body.package }}</strong> para <strong>{{ $('Webhook Lead').item.json.body.people }}</strong> personas.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Nuestro equipo te contactar\\u00e1 en un plazo de <strong style=\"color:#c8102e;\">24 horas</strong> para finalizar tu reserva.</p><div style=\"background-color:#1a1a1a;border-left:3px solid #c8102e;padding:15px 20px;margin:20px 0;border-radius:4px;\"><p style=\"color:#c9a227;font-size:14px;margin:0;\">\\u26a0\\ufe0f DISPONIBILIDAD LIMITADA</p><p style=\"color:#f0ece7;font-size:15px;margin:8px 0 0;\">Solo quedan <strong style=\"color:#c8102e;\">8 plazas</strong> para la experiencia exclusiva Monaco 2026.</p></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix \\u2014 La experiencia F1 m\\u00e1s exclusiva del mundo</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-confirm-es",
+      "name": "Email Confirm ES",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [1320, 700],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "hours"
+      },
+      "id": "wait-1h",
+      "name": "Wait 1 Hour",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            { "value": "it", "output": 0 },
+            { "value": "en", "output": 1 },
+            { "value": "fr", "output": 2 },
+            { "value": "es", "output": 3 }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{ $('Webhook Lead').item.json.body.language }}",
+        "fallbackOutput": 0
+      },
+      "id": "switch-lang-dossier",
+      "name": "Switch Language Dossier",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 2,
+      "position": [1780, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\ud83d\\udcf8 Foto Esclusive 2025 \\u2014 Playmates Grand Prix",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">DOSSIER ESCLUSIVO</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#f0ece7;font-size:22px;\">{{ $('Webhook Lead').item.json.body.name }}, ecco il dossier esclusivo!</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Abbiamo preparato per te una selezione esclusiva delle foto dell'edizione 2025 del Playmates Grand Prix a Monaco.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Scopri l'atmosfera, il glamour e l'adrenalina che ti aspettano nel 2026.</p><div style=\"text-align:center;margin:30px 0;\"><a href=\"LINK_DOSSIER\" style=\"display:inline-block;background-color:#c8102e;color:#f0ece7;text-decoration:none;padding:16px 40px;border-radius:4px;font-size:16px;font-weight:bold;letter-spacing:1px;\">SCARICA IL DOSSIER 2025</a></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-dossier-it",
+      "name": "Email Dossier IT",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [2020, 100],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\ud83d\\udcf8 Exclusive 2025 Photos \\u2014 Playmates Grand Prix",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">EXCLUSIVE DOSSIER</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#f0ece7;font-size:22px;\">{{ $('Webhook Lead').item.json.body.name }}, here is your exclusive dossier!</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">We've curated an exclusive selection of photos from the 2025 Playmates Grand Prix in Monaco.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Discover the atmosphere, glamour and adrenaline that awaits you in 2026.</p><div style=\"text-align:center;margin:30px 0;\"><a href=\"LINK_DOSSIER\" style=\"display:inline-block;background-color:#c8102e;color:#f0ece7;text-decoration:none;padding:16px 40px;border-radius:4px;font-size:16px;font-weight:bold;letter-spacing:1px;\">DOWNLOAD 2025 DOSSIER</a></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-dossier-en",
+      "name": "Email Dossier EN",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [2020, 300],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\ud83d\\udcf8 Photos Exclusives 2025 \\u2014 Playmates Grand Prix",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">DOSSIER EXCLUSIF</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#f0ece7;font-size:22px;\">{{ $('Webhook Lead').item.json.body.name }}, voici votre dossier exclusif!</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Nous avons pr\\u00e9par\\u00e9 pour vous une s\\u00e9lection exclusive de photos de l'\\u00e9dition 2025 du Playmates Grand Prix \\u00e0 Monaco.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">D\\u00e9couvrez l'atmosph\\u00e8re, le glamour et l'adr\\u00e9naline qui vous attendent en 2026.</p><div style=\"text-align:center;margin:30px 0;\"><a href=\"LINK_DOSSIER\" style=\"display:inline-block;background-color:#c8102e;color:#f0ece7;text-decoration:none;padding:16px 40px;border-radius:4px;font-size:16px;font-weight:bold;letter-spacing:1px;\">T\\u00c9L\\u00c9CHARGER LE DOSSIER 2025</a></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-dossier-fr",
+      "name": "Email Dossier FR",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [2020, 500],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\ud83d\\udcf8 Fotos Exclusivas 2025 \\u2014 Playmates Grand Prix",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">DOSSIER EXCLUSIVO</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#f0ece7;font-size:22px;\">{{ $('Webhook Lead').item.json.body.name }}, \\u00a1aqu\\u00ed tienes tu dossier exclusivo!</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Hemos preparado para ti una selecci\\u00f3n exclusiva de fotos de la edici\\u00f3n 2025 del Playmates Grand Prix en Monaco.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Descubre la atm\\u00f3sfera, el glamour y la adrenalina que te esperan en 2026.</p><div style=\"text-align:center;margin:30px 0;\"><a href=\"LINK_DOSSIER\" style=\"display:inline-block;background-color:#c8102e;color:#f0ece7;text-decoration:none;padding:16px 40px;border-radius:4px;font-size:16px;font-weight:bold;letter-spacing:1px;\">DESCARGAR DOSSIER 2025</a></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-dossier-es",
+      "name": "Email Dossier ES",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [2020, 700],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 24,
+        "unit": "hours"
+      },
+      "id": "wait-24h",
+      "name": "Wait 24 Hours",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [2260, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.callmebot.com/whatsapp.php",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "phone", "value": "CALLMEBOT_PHONE" },
+            { "name": "text", "value": "={{ encodeURIComponent('\\u23f0 REMINDER \\u2014 24h passate! Chiama ' + $('Webhook Lead').item.json.body.name + ' al ' + $('Webhook Lead').item.json.body.phone + ' \\u2014 Lingua: ' + $('Webhook Lead').item.json.body.language) }}" },
+            { "name": "apikey", "value": "CALLMEBOT_APIKEY" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "callmebot-24h-reminder",
+      "name": "CallMeBot 24h Reminder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [2480, 300]
+    },
+    {
+      "parameters": {
+        "amount": 48,
+        "unit": "hours"
+      },
+      "id": "wait-48h",
+      "name": "Wait 48 Hours",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [2700, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            { "value": "it", "output": 0 },
+            { "value": "en", "output": 1 },
+            { "value": "fr", "output": 2 },
+            { "value": "es", "output": 3 }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{ $('Webhook Lead').item.json.body.language }}",
+        "fallbackOutput": 0
+      },
+      "id": "switch-lang-urgency",
+      "name": "Switch Language Urgency",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 2,
+      "position": [2920, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\u26a0\\ufe0f I posti si stanno esaurendo \\u2014 Playmates Grand Prix Monaco 2026",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">URGENTE</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#c8102e;font-size:22px;\">{{ $('Webhook Lead').item.json.body.name }}, i posti si stanno esaurendo!</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Ti scriviamo perch\\u00e9 la disponibilit\\u00e0 per il pacchetto <strong style=\"color:#c9a227;\">{{ $('Webhook Lead').item.json.body.package }}</strong> sta diminuendo rapidamente.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Il weekend del Gran Premio di Monaco \\u00e8 l'evento pi\\u00f9 esclusivo dell'anno e i posti sono estremamente limitati.</p><div style=\"background-color:#1a1a1a;border-left:3px solid #c8102e;padding:15px 20px;margin:20px 0;border-radius:4px;\"><p style=\"color:#c8102e;font-size:18px;font-weight:bold;margin:0;\">Solo 8 posti rimasti!</p><p style=\"color:#f0ece7;font-size:15px;margin:8px 0 0;\">Non perdere questa opportunit\\u00e0 unica. Rispondi a questa email o chiamaci per confermare.</p></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-urgency-it",
+      "name": "Email Urgency IT",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [3160, 100],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\u26a0\\ufe0f Spots are running out \\u2014 Playmates Grand Prix Monaco 2026",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">URGENT</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#c8102e;font-size:22px;\">{{ $('Webhook Lead').item.json.body.name }}, spots are running out!</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">We're reaching out because availability for the <strong style=\"color:#c9a227;\">{{ $('Webhook Lead').item.json.body.package }}</strong> package is decreasing rapidly.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">The Monaco Grand Prix weekend is the most exclusive event of the year and spots are extremely limited.</p><div style=\"background-color:#1a1a1a;border-left:3px solid #c8102e;padding:15px 20px;margin:20px 0;border-radius:4px;\"><p style=\"color:#c8102e;font-size:18px;font-weight:bold;margin:0;\">Only 8 spots remaining!</p><p style=\"color:#f0ece7;font-size:15px;margin:8px 0 0;\">Don't miss this unique opportunity. Reply to this email or call us to confirm.</p></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-urgency-en",
+      "name": "Email Urgency EN",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [3160, 300],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\u26a0\\ufe0f Les places s'\\u00e9puisent \\u2014 Playmates Grand Prix Monaco 2026",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">URGENT</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#c8102e;font-size:22px;\">{{ $('Webhook Lead').item.json.body.name }}, les places s'\\u00e9puisent!</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Nous vous \\u00e9crivons car la disponibilit\\u00e9 pour le forfait <strong style=\"color:#c9a227;\">{{ $('Webhook Lead').item.json.body.package }}</strong> diminue rapidement.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Le weekend du Grand Prix de Monaco est l'\\u00e9v\\u00e9nement le plus exclusif de l'ann\\u00e9e et les places sont extr\\u00eamement limit\\u00e9es.</p><div style=\"background-color:#1a1a1a;border-left:3px solid #c8102e;padding:15px 20px;margin:20px 0;border-radius:4px;\"><p style=\"color:#c8102e;font-size:18px;font-weight:bold;margin:0;\">Seulement 8 places restantes!</p><p style=\"color:#f0ece7;font-size:15px;margin:8px 0 0;\">Ne manquez pas cette opportunit\\u00e9 unique. R\\u00e9pondez \\u00e0 cet email ou appelez-nous pour confirmer.</p></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-urgency-fr",
+      "name": "Email Urgency FR",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [3160, 500],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\u26a0\\ufe0f Las plazas se est\\u00e1n agotando \\u2014 Playmates Grand Prix Monaco 2026",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">URGENTE</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#c8102e;font-size:22px;\">{{ $('Webhook Lead').item.json.body.name }}, \\u00a1las plazas se est\\u00e1n agotando!</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Te escribimos porque la disponibilidad para el paquete <strong style=\"color:#c9a227;\">{{ $('Webhook Lead').item.json.body.package }}</strong> est\\u00e1 disminuyendo r\\u00e1pidamente.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">El fin de semana del Gran Premio de M\\u00f3naco es el evento m\\u00e1s exclusivo del a\\u00f1o y las plazas son extremadamente limitadas.</p><div style=\"background-color:#1a1a1a;border-left:3px solid #c8102e;padding:15px 20px;margin:20px 0;border-radius:4px;\"><p style=\"color:#c8102e;font-size:18px;font-weight:bold;margin:0;\">\\u00a1Solo quedan 8 plazas!</p><p style=\"color:#f0ece7;font-size:15px;margin:8px 0 0;\">No pierdas esta oportunidad \\u00fanica. Responde a este email o ll\\u00e1manos para confirmar.</p></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-urgency-es",
+      "name": "Email Urgency ES",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [3160, 700],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "days"
+      },
+      "id": "wait-5d",
+      "name": "Wait 5 Days",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [3400, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            { "value": "it", "output": 0 },
+            { "value": "en", "output": 1 },
+            { "value": "fr", "output": 2 },
+            { "value": "es", "output": 3 }
+          ]
+        },
+        "dataType": "string",
+        "value1": "={{ $('Webhook Lead').item.json.body.language }}",
+        "fallbackOutput": 0
+      },
+      "id": "switch-lang-lastchance",
+      "name": "Switch Language Last Chance",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 2,
+      "position": [3620, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\ud83d\\udea8 Ultima possibilit\\u00e0 \\u2014 Playmates Grand Prix Monaco 2026",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #c8102e;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">ULTIMA POSSIBILIT\\u00c0</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#c8102e;font-size:24px;\">{{ $('Webhook Lead').item.json.body.name }}, questa \\u00e8 la tua ultima possibilit\\u00e0.</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Stiamo per chiudere le prenotazioni per il pacchetto <strong style=\"color:#c9a227;\">{{ $('Webhook Lead').item.json.body.package }}</strong>.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Dopo questa comunicazione, il tuo posto non sar\\u00e0 pi\\u00f9 garantito e verr\\u00e0 offerto alla lista d'attesa.</p><div style=\"background-color:#c8102e;padding:20px;margin:25px 0;border-radius:4px;text-align:center;\"><p style=\"color:#f0ece7;font-size:20px;font-weight:bold;margin:0;\">RISPONDI ORA PER CONFERMARE</p><p style=\"color:#f0ece7;font-size:14px;margin:8px 0 0;\">o chiamaci immediatamente</p></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix \\u2014 Monaco</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-lastchance-it",
+      "name": "Email Last Chance IT",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [3860, 100],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\ud83d\\udea8 Last chance \\u2014 Playmates Grand Prix Monaco 2026",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #c8102e;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">LAST CHANCE</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#c8102e;font-size:24px;\">{{ $('Webhook Lead').item.json.body.name }}, this is your last chance.</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">We are about to close bookings for the <strong style=\"color:#c9a227;\">{{ $('Webhook Lead').item.json.body.package }}</strong> package.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">After this message, your spot will no longer be guaranteed and will be offered to the waiting list.</p><div style=\"background-color:#c8102e;padding:20px;margin:25px 0;border-radius:4px;text-align:center;\"><p style=\"color:#f0ece7;font-size:20px;font-weight:bold;margin:0;\">REPLY NOW TO CONFIRM</p><p style=\"color:#f0ece7;font-size:14px;margin:8px 0 0;\">or call us immediately</p></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix \\u2014 Monaco</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-lastchance-en",
+      "name": "Email Last Chance EN",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [3860, 300],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\ud83d\\udea8 Derni\\u00e8re chance \\u2014 Playmates Grand Prix Monaco 2026",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #c8102e;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">DERNI\\u00c8RE CHANCE</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#c8102e;font-size:24px;\">{{ $('Webhook Lead').item.json.body.name }}, c'est votre derni\\u00e8re chance.</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Nous sommes sur le point de fermer les r\\u00e9servations pour le forfait <strong style=\"color:#c9a227;\">{{ $('Webhook Lead').item.json.body.package }}</strong>.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Apr\\u00e8s ce message, votre place ne sera plus garantie et sera propos\\u00e9e \\u00e0 la liste d'attente.</p><div style=\"background-color:#c8102e;padding:20px;margin:25px 0;border-radius:4px;text-align:center;\"><p style=\"color:#f0ece7;font-size:20px;font-weight:bold;margin:0;\">R\\u00c9PONDEZ MAINTENANT</p><p style=\"color:#f0ece7;font-size:14px;margin:8px 0 0;\">ou appelez-nous imm\\u00e9diatement</p></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix \\u2014 Monaco</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-lastchance-fr",
+      "name": "Email Last Chance FR",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [3860, 500],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@playmatesgrandprix.com",
+        "toEmail": "={{ $('Webhook Lead').item.json.body.email }}",
+        "subject": "=\\ud83d\\udea8 \\u00daltima oportunidad \\u2014 Playmates Grand Prix Monaco 2026",
+        "html": "=<html><body style=\"margin:0;padding:0;background-color:#050505;font-family:'Helvetica Neue',Arial,sans-serif;\"><table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#050505;\"><tr><td align=\"center\" style=\"padding:40px 20px;\"><table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#0a0a0a;border:1px solid #c8102e;border-radius:8px;\"><tr><td style=\"padding:40px 40px 20px;text-align:center;\"><h1 style=\"color:#c9a227;font-size:28px;margin:0;letter-spacing:2px;\">PLAYMATES GRAND PRIX</h1><p style=\"color:#c8102e;font-size:14px;letter-spacing:4px;margin:5px 0 0;\">\\u00daLTIMA OPORTUNIDAD</p></td></tr><tr><td style=\"padding:20px 40px;\"><h2 style=\"color:#c8102e;font-size:24px;\">{{ $('Webhook Lead').item.json.body.name }}, esta es tu \\u00faltima oportunidad.</h2><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Estamos a punto de cerrar las reservas para el paquete <strong style=\"color:#c9a227;\">{{ $('Webhook Lead').item.json.body.package }}</strong>.</p><p style=\"color:#f0ece7;font-size:16px;line-height:1.6;\">Despu\\u00e9s de este mensaje, tu plaza ya no estar\\u00e1 garantizada y ser\\u00e1 ofrecida a la lista de espera.</p><div style=\"background-color:#c8102e;padding:20px;margin:25px 0;border-radius:4px;text-align:center;\"><p style=\"color:#f0ece7;font-size:20px;font-weight:bold;margin:0;\">RESPONDE AHORA PARA CONFIRMAR</p><p style=\"color:#f0ece7;font-size:14px;margin:8px 0 0;\">o ll\\u00e1manos inmediatamente</p></div></td></tr><tr><td style=\"padding:20px 40px 40px;text-align:center;\"><p style=\"color:#666;font-size:12px;\">\\u00a9 2026 Playmates Grand Prix \\u2014 Monaco</p></td></tr></table></td></tr></table></body></html>",
+        "options": {}
+      },
+      "id": "email-lastchance-es",
+      "name": "Email Last Chance ES",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [3860, 700],
+      "credentials": {
+        "smtp": {
+          "id": "TUO_SMTP_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "playmates-exit",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-exit",
+      "name": "Webhook Exit",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 1200],
+      "webhookId": "playmates-exit"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: \"ok\" }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-exit",
+      "name": "Respond Exit",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [420, 1200]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "TUO_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Exit Popup",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "Email": "={{ $json.body.email }}",
+            "Source": "={{ $json.body.source }}",
+            "Lingua": "={{ $json.body.language }}",
+            "Stato": "={{ $json.body.stato || 'nuovo' }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "gsheets-exit",
+      "name": "Google Sheets Exit",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [640, 1200],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TUO_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "playmates-wa-click",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-wa",
+      "name": "Webhook WA Click",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 1500],
+      "webhookId": "playmates-wa-click"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: \"ok\" }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-wa",
+      "name": "Respond WA Click",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [420, 1500]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "TUO_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "WhatsApp Clicks",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ new Date().toISOString() }}",
+            "Lingua": "={{ $json.body.language }}",
+            "UTM_Source": "={{ $json.body.utm_source }}",
+            "UTM_Medium": "={{ $json.body.utm_medium }}",
+            "UTM_Campaign": "={{ $json.body.utm_campaign }}",
+            "Referrer": "={{ $json.body.referrer }}",
+            "Page_URL": "={{ $json.body.page_url }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "gsheets-wa",
+      "name": "Google Sheets WA Click",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [640, 1500],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TUO_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "merge-after-confirm",
+      "name": "Merge After Confirm",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [1560, 100],
+      "mode": "passThrough"
+    },
+    {
+      "parameters": {},
+      "id": "merge-after-dossier",
+      "name": "Merge After Dossier",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [2260, 100],
+      "mode": "passThrough"
+    },
+    {
+      "parameters": {},
+      "id": "merge-after-urgency",
+      "name": "Merge After Urgency",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [3400, 100],
+      "mode": "passThrough"
+    }
+  ],
+  "connections": {
+    "Webhook Lead": {
+      "main": [
+        [
+          { "node": "Respond Lead", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Respond Lead": {
+      "main": [
+        [
+          { "node": "Google Sheets Lead", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Google Sheets Lead": {
+      "main": [
+        [
+          { "node": "CallMeBot New Lead", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "CallMeBot New Lead": {
+      "main": [
+        [
+          { "node": "Switch Language 1", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Switch Language 1": {
+      "main": [
+        [
+          { "node": "Email Conferma IT", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Confirm EN", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Confirm FR", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Confirm ES", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Conferma IT": {
+      "main": [
+        [
+          { "node": "Wait 1 Hour", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Confirm EN": {
+      "main": [
+        [
+          { "node": "Wait 1 Hour", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Confirm FR": {
+      "main": [
+        [
+          { "node": "Wait 1 Hour", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Confirm ES": {
+      "main": [
+        [
+          { "node": "Wait 1 Hour", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Wait 1 Hour": {
+      "main": [
+        [
+          { "node": "Switch Language Dossier", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Switch Language Dossier": {
+      "main": [
+        [
+          { "node": "Email Dossier IT", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Dossier EN", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Dossier FR", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Dossier ES", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Dossier IT": {
+      "main": [
+        [
+          { "node": "Wait 24 Hours", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Dossier EN": {
+      "main": [
+        [
+          { "node": "Wait 24 Hours", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Dossier FR": {
+      "main": [
+        [
+          { "node": "Wait 24 Hours", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Dossier ES": {
+      "main": [
+        [
+          { "node": "Wait 24 Hours", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Wait 24 Hours": {
+      "main": [
+        [
+          { "node": "CallMeBot 24h Reminder", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "CallMeBot 24h Reminder": {
+      "main": [
+        [
+          { "node": "Wait 48 Hours", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Wait 48 Hours": {
+      "main": [
+        [
+          { "node": "Switch Language Urgency", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Switch Language Urgency": {
+      "main": [
+        [
+          { "node": "Email Urgency IT", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Urgency EN", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Urgency FR", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Urgency ES", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Urgency IT": {
+      "main": [
+        [
+          { "node": "Wait 5 Days", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Urgency EN": {
+      "main": [
+        [
+          { "node": "Wait 5 Days", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Urgency FR": {
+      "main": [
+        [
+          { "node": "Wait 5 Days", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Email Urgency ES": {
+      "main": [
+        [
+          { "node": "Wait 5 Days", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Wait 5 Days": {
+      "main": [
+        [
+          { "node": "Switch Language Last Chance", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Switch Language Last Chance": {
+      "main": [
+        [
+          { "node": "Email Last Chance IT", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Last Chance EN", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Last Chance FR", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Email Last Chance ES", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Webhook Exit": {
+      "main": [
+        [
+          { "node": "Respond Exit", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Respond Exit": {
+      "main": [
+        [
+          { "node": "Google Sheets Exit", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Webhook WA Click": {
+      "main": [
+        [
+          { "node": "Respond WA Click", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Respond WA Click": {
+      "main": [
+        [
+          { "node": "Google Sheets WA Click", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 3,
+  "updatedAt": "2026-03-20T00:00:00.000Z",
+  "versionId": "1"
+}
